@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-demo-active
+  namespace: demo
+  labels:
+    app.kubernetes.io/name: test-demo
+    app.kubernetes.io/component: active
+spec:
+  type: ClusterIP
+  selector:
+    app: test-demo
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-demo-preview
+  namespace: demo
+  labels:
+    app.kubernetes.io/name: test-demo
+    app.kubernetes.io/component: preview
+spec:
+  type: ClusterIP
+  selector:
+    app: test-demo
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

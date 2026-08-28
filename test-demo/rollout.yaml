@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: test-demo
+  namespace: demo
+  labels:
+    app.kubernetes.io/name: test-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  progressDeadlineSeconds: 300
+  selector:
+    matchLabels:
+      app: test-demo
+  template:
+    metadata:
+      labels:
+        app: test-demo
+    spec:
+      terminationGracePeriodSeconds: 20
+      containers:
+        - name: test-demo
+          image: test-demo:base
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: APP_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: test-demo-config
+                  key: APP_VERSION
+            - name: APP_COLOR
+              valueFrom:
+                configMapKeyRef:
+                  name: test-demo-config
+                  key: APP_COLOR
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 3
+            failureThreshold: 40
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+  strategy:
+    blueGreen:
+      activeService: test-demo-active
+      previewService: test-demo-preview
+      autoPromotionEnabled: true
+      previewReplicaCount: 1
+      scaleDownDelaySeconds: 30

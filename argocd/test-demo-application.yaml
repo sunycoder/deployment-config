@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test-demo
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: test-demo
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sunycoder/deployment-config.git
+    targetRevision: master
+    path: test-demo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+

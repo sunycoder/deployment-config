@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  - service.yaml
+  - ingress.yaml
+  - rollout.yaml
+
+configMapGenerator:
+  - name: test-demo-config
+    envs:
+      - version.env
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+images:
+  - name: test-demo
+    newName: k3d-demo-registry.localhost:5001/demo/test-demo
+    newTag: build-0
