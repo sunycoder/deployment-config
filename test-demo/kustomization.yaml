@@ -18,4 +18,4 @@ generatorOptions:
 images:
   - name: test-demo
     newName: k3d-demo-registry.localhost:5001/demo/test-demo
-    newTag: build-18
+    newTag: build-19
